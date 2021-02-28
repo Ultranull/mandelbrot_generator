@@ -106,6 +106,7 @@ class Game :public App {
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO();
 		ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+		//ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 		//io.IniFilename = NULL;
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
 		ImGui_ImplOpenGL3_Init("#version 130");
@@ -220,7 +221,7 @@ class Game :public App {
 	void ColorSettingsWindow() {
 		ImGui::Begin("Color settings"); {
 
-			ImGui::SliderFloat("gradient multiplier", &gradientMult, 1, 500, "%f", 10.f);
+			ImGui::SliderFloat("gradient multiplier", &gradientMult, 1, 500, "%f", ImGuiSliderFlags_Logarithmic);
 			ImGui::DragFloat("Gradient Offset", &gradientOffset, 0.001);
 			ImGui::Text("Gradient Pallete");
 			ImGui::Indent();
@@ -292,14 +293,14 @@ class Game :public App {
 		ImGuiWindowFlags window_flags = 0;
 		//window_flags |= ImGuiWindowFlags_AlwaysAutoResize;
 		ImGui::Begin("Settings", nullptr, window_flags); {
-			ImGui::SliderFloat("Step size", &positionStepSize, FLT_EPSILON, .0005, "%.10f", 10.f);
+			ImGui::SliderFloat("Step size", &positionStepSize, FLT_EPSILON, .0005, "%.10f", ImGuiSliderFlags_Logarithmic);
 
-			ImGui::DragFloat2("Position", reinterpret_cast<float*>(&position),positionStepSize, -4, 4, "%.10f", 10.f);
+			ImGui::DragFloat2("Position", reinterpret_cast<float*>(&position),positionStepSize, -4, 4, "%.10f", ImGuiSliderFlags_Logarithmic);
 
-			ImGui::DragFloat2("Relative", reinterpret_cast<float*>(&relative), positionStepSize, -4, 4, "%.10f", 10.f);
+			ImGui::DragFloat2("Relative", reinterpret_cast<float*>(&relative), positionStepSize, -4, 4, "%.10f", ImGuiSliderFlags_Logarithmic);
 
-			ImGui::SliderFloat("Mandelbrot Zoom", &mandelbrotRadius, 0.00000001, 1, "%.10f", 10.f);
-			ImGui::SliderFloat("Julia Zoom", &juliaRadius, 0.00000001, 1, "%.10f", 10.f);
+			ImGui::SliderFloat("Mandelbrot Zoom", &mandelbrotRadius, 0.00000001, 1, "%.10f", ImGuiSliderFlags_Logarithmic);
+			ImGui::SliderFloat("Julia Zoom", &juliaRadius, 0.00000001, 1, "%.10f", ImGuiSliderFlags_Logarithmic);
 
 			ImGui::SliderInt("Iterations", &iterations, 1, 2048);
 			ImGui::DragFloat("Power", &power, .01f, 1, 10);
@@ -616,6 +617,7 @@ class Game :public App {
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
+		ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
 		FrameBuffer::bindDefualt();
 		viewportinit(window);
 		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
@@ -623,7 +625,7 @@ class Game :public App {
 		mandelbrotWindow();
 		juliaWindow();
 		
-		FpsWindow(); 
+		//FpsWindow(); 
 		SettingsWindow();
 		ColorSettingsWindow();
 
@@ -632,6 +634,13 @@ class Game :public App {
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+		ImGui::EndFrame();
+
+		if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+		{
+			ImGui::UpdatePlatformWindows();
+			ImGui::RenderPlatformWindowsDefault();
+		}
 	}
 
 	void inputListener(float delta) {
