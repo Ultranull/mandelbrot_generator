@@ -106,7 +106,7 @@ class Game :public App {
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO();
 		ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-		//ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+		ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 		//io.IniFilename = NULL;
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
 		ImGui_ImplOpenGL3_Init("#version 130");
@@ -295,9 +295,9 @@ class Game :public App {
 		ImGui::Begin("Settings", nullptr, window_flags); {
 			ImGui::SliderFloat("Step size", &positionStepSize, FLT_EPSILON, .0005, "%.10f", ImGuiSliderFlags_Logarithmic);
 
-			ImGui::DragFloat2("Position", reinterpret_cast<float*>(&position),positionStepSize, -4, 4, "%.10f", ImGuiSliderFlags_Logarithmic);
+			ImGui::DragFloat2("Position", reinterpret_cast<float*>(&position),positionStepSize, -4, 4, "%.10f", 0);
 
-			ImGui::DragFloat2("Relative", reinterpret_cast<float*>(&relative), positionStepSize, -4, 4, "%.10f", ImGuiSliderFlags_Logarithmic);
+			ImGui::DragFloat2("Relative", reinterpret_cast<float*>(&relative), positionStepSize, -4, 4, "%.10f", 0);
 
 			ImGui::SliderFloat("Mandelbrot Zoom", &mandelbrotRadius, 0.00000001, 1, "%.10f", ImGuiSliderFlags_Logarithmic);
 			ImGui::SliderFloat("Julia Zoom", &juliaRadius, 0.00000001, 1, "%.10f", ImGuiSliderFlags_Logarithmic);
