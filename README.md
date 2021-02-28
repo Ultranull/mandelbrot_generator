@@ -1,5 +1,5 @@
 # Mandelbrot Generator
-some text here for explaining things
+This is just a toy I made to entertain myself while in boring meetings.
 
 ### Dependancies
 * [GLAD for opengl loading](https://glad.dav1d.de/)
@@ -16,3 +16,9 @@ some text here for explaining things
 ![](images/bw.png)
 
 ![](images/cosmic_starfish.png)
+
+# Future plans
+I've been playing with ray marching. So far I have a lot of ideas on where this will go. I dont know when I'll get to work on it, but some big changes need to happen before getting there.
+
+For now heres a teaser:
+![](images/render.png)
