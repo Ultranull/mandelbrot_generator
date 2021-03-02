@@ -42,6 +42,7 @@
 		}
 		glfwSetWindowUserPointer(window, this);
 		glfwSetKeyCallback(window, onKey);
+		glfwSetScrollCallback(window, ScrollCallback);
 
 		GLFWimage icon[1];
 		int bpp;
@@ -80,7 +81,7 @@
 		onClose();
 	}
 
-	void App::callback(int key, int scancode, int action, int mods) {
+	void App::Keycallback(int key, int scancode, int action, int mods) {
 		keyfunc func = inputs[key];
 		if (func != nullptr) {
 			func(action, mods);

@@ -15,11 +15,20 @@
 		typedef std::pair<int, keyfunc> keyAction;
 		std::map<int, keyfunc> inputs;
 
-		void callback(int, int, int, int);
+		void Keycallback(int, int, int, int);
+
+		void ScrollCallback(double xoffset, double yoffset) {
+			scrolloffset = yoffset;
+		}
 
 		static void onKey(GLFWwindow* window, int key, int scancode, int actions, int mods) {
 			App* obj = static_cast<App*>(glfwGetWindowUserPointer(window));
-			obj->callback(key, scancode, actions, mods);
+			obj->Keycallback(key, scancode, actions, mods);
+		}
+
+		static void ScrollCallback(GLFWwindow* window,double xoffset, double yoffset) {
+			App* obj = static_cast<App*>(glfwGetWindowUserPointer(window));
+			obj->ScrollCallback(xoffset, yoffset);
 		}
 	protected:
 		GLFWwindow *window;
@@ -27,6 +36,8 @@
 		int fps = 0;
 		bool running = true;
 		int width, height;
+
+		double scrolloffset;
 
 		void viewportinit(GLFWwindow *window);
 

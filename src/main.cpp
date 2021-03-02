@@ -1,4 +1,8 @@
-#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
+
+#ifdef NDEBUG
+	#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
+#endif // DEBUG
+
 
 #include <fstream>
 #include <sstream>
@@ -93,6 +97,9 @@ class Game :public App {
 	bool swapped = false, burningShip = false;
 	vec2 position, relative;
 
+	dvec2 oldmouse;
+	dvec2 newmouse;
+
 	void initGL() {
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LESS);
@@ -106,7 +113,7 @@ class Game :public App {
 		ImGui::CreateContext();
 		ImGuiIO& io = ImGui::GetIO();
 		ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-		ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+		//ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 		//io.IniFilename = NULL;
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
 		ImGui_ImplOpenGL3_Init("#version 130");
@@ -441,9 +448,29 @@ class Game :public App {
 				ImVec2(vMin.x + pos.x, vMin.y + pos.y),
 				ImVec2(vMax.x + pos.x, vMax.y + pos.y));
 
+
+			if (ImGui::IsWindowFocused())
+			{
+				mandelbrotRadius += scrolloffset * mandelbrotRadius * 0.1;
+				int button = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
+				dvec2 wmin(vMin.x + pos.x, vMin.y + pos.y);
+				dvec2 wmax(vMax.x + pos.x, vMax.y + pos.y);
+				if (newmouse.x > wmin.x &&
+					newmouse.x < wmax.x &&
+					newmouse.y > wmin.y &&
+					newmouse.y < wmax.y &&
+					button == GLFW_PRESS)
+				{
+					dvec2 rel = wmax - wmin;
+					dvec2 p = ((oldmouse - newmouse) / rel);
+					p.x *= -1;
+					dvec2 diff = p * (double)mandelbrotRadius * 4.0;
+					position -= diff;
+				}
+			}
+
 			if (ImGui::BeginMenuBar())
 			{
-
 				if (ImGui::MenuItem("Save"))
 				{
 					ivec2 size(2500, 2500);
@@ -515,6 +542,26 @@ class Game :public App {
 				(void*)juliaBuffer.getTexture("color").id,
 				ImVec2(vMin.x + pos.x, vMin.y + pos.y),
 				ImVec2(vMax.x + pos.x, vMax.y + pos.y));
+
+			if (ImGui::IsWindowFocused())
+			{
+				juliaRadius += scrolloffset * juliaRadius * 0.1;
+				int button = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT);
+				dvec2 wmin(vMin.x + pos.x, vMin.y + pos.y);
+				dvec2 wmax(vMax.x + pos.x, vMax.y + pos.y);
+				if (newmouse.x > wmin.x &&
+					newmouse.x < wmax.x &&
+					newmouse.y > wmin.y &&
+					newmouse.y < wmax.y &&
+					button == GLFW_PRESS)
+				{
+					dvec2 rel = wmax - wmin;
+					dvec2 p = ((oldmouse - newmouse) / rel);
+					p.x *= -1;
+					dvec2 diff = p * (double)juliaRadius * 4.0;
+					relative -= diff;
+				}
+			}
 
 			if (ImGui::BeginMenuBar())
 			{
@@ -598,6 +645,11 @@ class Game :public App {
 
 	void render(float delta) {
 
+		dvec2 screanSpaceMouse;
+		glfwGetCursorPos(window, &screanSpaceMouse.x, &screanSpaceMouse.y);
+		oldmouse = newmouse;
+		newmouse = screanSpaceMouse;
+
 		renderFractal(
 			mandelbrotWindowSize.x,
 			mandelbrotWindowSize.y,
@@ -612,6 +664,7 @@ class Game :public App {
 			juliaBuffer,
 			juliaShader);
 
+
 		mesh.renderVertices(GL_TRIANGLES);
 
 		ImGui_ImplOpenGL3_NewFrame();
@@ -624,6 +677,7 @@ class Game :public App {
 
 		mandelbrotWindow();
 		juliaWindow();
+		scrolloffset = 0;
 		
 		//FpsWindow(); 
 		SettingsWindow();
