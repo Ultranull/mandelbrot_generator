@@ -94,7 +94,7 @@ class Game :public App {
 	float positionStepSize = 1, mandelbrotRadius = .5f, juliaRadius = .5f;
 	float gradientMult = 1, power = 2.f, gradientOffset = 0;
 	int iterations = 300;
-	bool swapped = false, burningShip = false;
+	bool swapped = false, burningShip = false, doubleBuffers = false;
 	vec2 position, relative;
 
 	dvec2 oldmouse;
@@ -328,6 +328,7 @@ class Game :public App {
 				relative = vec4(0);
 				power = 2;
 			}
+			ImGui::Checkbox("Double Render Size", &doubleBuffers);
 
 		}ImGui::End();
 	}
@@ -501,6 +502,8 @@ class Game :public App {
 					ImGui::InputInt2("Resolution", resolution);
 
 					if (ImGui::Button("OK", ImVec2(120, 0))) {
+						bool t = doubleBuffers;
+						doubleBuffers = false;
 						ivec2 size(resolution[0], resolution[1]);
 						renderFractal(
 							size.x,
@@ -513,6 +516,7 @@ class Game :public App {
 						stbi_write_png(textinput, size.x, size.y, 4, data, size.x * 4);
 						delete[] data;
 						ImGui::CloseCurrentPopup();
+						doubleBuffers = t;
 					}
 					ImGui::SetItemDefaultFocus();
 					ImGui::SameLine();
@@ -595,6 +599,8 @@ class Game :public App {
 					ImGui::InputInt2("Resolution", resolution);
 
 					if (ImGui::Button("OK", ImVec2(120, 0))) { 
+						bool t = doubleBuffers;
+						doubleBuffers = false;
 						ivec2 size(resolution[0], resolution[1]);
 						renderFractal(
 							size.x,
@@ -606,7 +612,8 @@ class Game :public App {
 						glReadPixels(0, 0, size.x, size.y, GL_RGBA, GL_UNSIGNED_BYTE, data);
 						stbi_write_png(textinput, size.x, size.y, 4, data, size.x * 4);
 						delete[] data;
-						ImGui::CloseCurrentPopup(); 
+						ImGui::CloseCurrentPopup();
+						doubleBuffers = t;
 					}
 					ImGui::SetItemDefaultFocus();
 					ImGui::SameLine();
@@ -621,9 +628,10 @@ class Game :public App {
 	}
 
 	void renderFractal(int width, int height, float radius, FrameBuffer& buffer, Program& shader) {
+		int d = doubleBuffers ? 2 : 1;
 		buffer.bind();
-		buffer.ResizeTexture("color", width, height);
-		glViewport(0, 0, width, height);
+		buffer.ResizeTexture("color", width*d, height*d);
+		glViewport(0, 0, width*d, height*d);
 		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 		shader.bind();
 		shader.setUniform("time", ticks);
