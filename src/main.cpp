@@ -181,11 +181,11 @@ class Game :public App {
 
 		//colorPallete = vector<vec4>(10, vec4(0));
 		colorPallete.push_back(vec4(1, 0, 0, 1));
-		colorPallete.push_back(vec4(0, 1, 0, 1));
-		colorPallete.push_back(vec4(0, 0, 1, 1));
-		colorPallete.push_back(vec4(0, 1, 1, 1));
-		colorPallete.push_back(vec4(1, 0, 1, 1));
 		colorPallete.push_back(vec4(1, 1, 0, 1));
+		colorPallete.push_back(vec4(0, 1, 0, 1));
+		colorPallete.push_back(vec4(0, 1, 1, 1));
+		colorPallete.push_back(vec4(0, 0, 1, 1));
+		colorPallete.push_back(vec4(1, 0, 1, 1));
 	
 		palleteBuffer = UniformBuffer();
 		palleteBuffer.bind();
