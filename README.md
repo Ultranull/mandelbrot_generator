@@ -21,4 +21,4 @@ This is just a toy I made to entertain myself while in boring meetings.
 I've been playing with ray marching. So far I have a lot of ideas on where this will go. I dont know when I'll get to work on it, but some big changes need to happen before getting there.
 
 For now heres a teaser:
-![](images/render.png)
+![](render.png)
